@@ -1,38 +1,10 @@
 import os
 from flask import Flask, request, jsonify, render_template
 
-# Add current directory to Python path
-import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-try:
-    from classifiers.question_classifier import classify_question
-    from solvers.trigonometry import solve_trigonometry
-    from solvers.interest import solve_interest
-except ImportError as e:
-    print(f"Import error: {e}")
-    # Fallback: import directly
-    import importlib.util
-    import os
-    
-    def import_module_from_file(module_name, file_path):
-        spec = importlib.util.spec_from_file_location(module_name, file_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module
-    
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    classifiers_path = os.path.join(current_dir, 'classifiers', 'question_classifier.py')
-    trig_path = os.path.join(current_dir, 'solvers', 'trigonometry.py')
-    interest_path = os.path.join(current_dir, 'solvers', 'interest.py')
-    
-    classifier_module = import_module_from_file('question_classifier', classifiers_path)
-    trig_module = import_module_from_file('trigonometry', trig_path)
-    interest_module = import_module_from_file('interest', interest_path)
-    
-    classify_question = classifier_module.classify_question
-    solve_trigonometry = trig_module.solve_trigonometry
-    solve_interest = interest_module.solve_interest
+# Import your modules
+from classifiers.question_classifier import classify_question
+from solvers.trigonometry import solve_trigonometry
+from solvers.interest import solve_interest
 
 app = Flask(__name__)
 
@@ -49,11 +21,8 @@ def solve_question():
         if not question:
             return jsonify({'error': 'No question provided'}), 400
         
-        print(f"PROCESSING QUESTION: {question}")
-        
         # Classify the question
         question_type = classify_question(question)
-        print(f"CLASSIFIED AS: {question_type}")
         
         # Solve based on type
         if question_type == 'trigonometry':
@@ -65,8 +34,6 @@ def solve_question():
         else:
             return jsonify({'error': 'Unsupported question type'}), 400
         
-        print(f"SOLUTION DATA: {solution_data}")
-        
         # Render template with solution data
         rendered_html = render_template(template_name, **solution_data)
         
@@ -76,11 +43,8 @@ def solve_question():
         })
         
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        import traceback
-        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port)
