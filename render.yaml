@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: maths-solver
+    env: python
+    plan: free
+    branch: main
+    buildCommand: ""
+    startCommand: python app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.13
