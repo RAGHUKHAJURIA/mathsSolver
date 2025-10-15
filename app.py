@@ -1,34 +1,36 @@
 import os
 import sys
-
-# Add current directory to Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 from flask import Flask, request, jsonify, render_template
 
-# Import your modules
+# Add current directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 try:
     from classifiers.question_classifier import classify_question
     from solvers.trigonometry import solve_trigonometry
     from solvers.interest import solve_interest
 except ImportError as e:
     print(f"Import error: {e}")
-    # Fallback imports
+    # Try to import using absolute paths
     import importlib.util
-    import os
     
-    def import_module_from_file(module_name, file_path):
+    def import_from_file(module_name, file_path):
         spec = importlib.util.spec_from_file_location(module_name, file_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
     
-    # Import modules directly
-    classify_question = import_module_from_file('classify_question', './classifiers/question_classifier.py').classify_question
-    solve_trigonometry = import_module_from_file('solve_trigonometry', './solvers/trigonometry.py').solve_trigonometry
-    solve_interest = import_module_from_file('solve_interest', './solvers/interest.py').solve_interest
+    # Import modules
+    classifier_module = import_from_file('classifier', os.path.join(current_dir, 'classifiers', 'question_classifier.py'))
+    trig_module = import_from_file('trigonometry', os.path.join(current_dir, 'solvers', 'trigonometry.py'))
+    interest_module = import_from_file('interest', os.path.join(current_dir, 'solvers', 'interest.py'))
+    
+    classify_question = classifier_module.classify_question
+    solve_trigonometry = trig_module.solve_trigonometry
+    solve_interest = interest_module.solve_interest
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 
 @app.route('/')
 def index():
@@ -75,5 +77,6 @@ def solve_question():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+# Vercel requires this
 if __name__ == '__main__':
     app.run(debug=True)
