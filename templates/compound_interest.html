@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Compound Interest Layout</title>
+  <link rel="stylesheet" href="colourCode.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Calibri, sans-serif;
+      font-size: 27px;
+      font-weight: bold;
+      background: #fff;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: auto;
+      display: flex;
+      gap: 0px;
+      box-shadow: 0 4px 8px rgba(-10,0,0,4);
+      border-radius: 12px;
+      padding: 50px 86px;
+      position: relative;
+    }
+
+    .arrow-col {
+      width: 40px;
+      position: relative;
+      margin-right: 10px;
+    }
+
+    .arrow {
+      position: absolute;
+      left: 0;
+      font-size: 30px;
+      color: #888;
+    }
+
+    .arrow1 { top: 50px; }
+    .arrow2 { top: 216px; }
+    .arrow3 { top: 369PX; }
+    .arrow4 { top: 525px; }
+    .arrow5 { top: 647px; }
+
+    .left-col {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .right-col {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding-left: 54px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bracket {
+      background: #ffeaea;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 5px;
+    }
+
+    .fraction .top {
+      padding: 3px 17px;
+    }
+
+    .fraction .bottom {
+      border-top: 2px solid #000;
+      padding: 0 6px;
+    }
+
+    .varbox {
+      padding: 3px 17px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 0 4px;
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .numbox {
+      background: #ffffff;
+      padding: 2px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 0 4px;
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+    .highlight {
+      background: #1bad83;
+      color: white;
+      padding: 2px 12px;
+      border-radius: 6px;
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+      font-size: 30px;
+    }
+
+    .dashed-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      align-items: center;
+    }
+
+    .dashed-line {
+      width: 0;
+      border-left: 3px dashed #000;
+      height: 70px;
+      position: relative;
+      top: 5px;
+    }
+
+    .blackbox-inline {
+      background: #222;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 27px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      gap: 10px;
+    }
+
+    .blackbox {
+      background: #222;
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      text-align: center;
+      display: flex;
+      gap: 31px;
+    }
+
+    .blackbox-container {
+      position: relative;
+    }
+
+    .long-arrow {
+      position: absolute;
+      top: -12px;
+      left: 177px;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 94px;
+      background: white;
+      z-index: 1;
+      rotate: 270deg;
+    }
+
+    .long-arrow::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 12px solid white;
+    }
+
+    .right-top-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 3px dashed #6d6d6d;
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .right-top-box img {
+      width: 90px;
+      height: 121px;
+    }
+
+    .vertical-content {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .calc-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .thirdBracket {
+      font-size: 100px;
+      font-weight: 100;
+    }
+
+    .num0 { background: linear-gradient(to bottom, #F8BACA, #A1C1E0);}
+    .num1 { background: linear-gradient(to bottom, #EBE0C7, #97B5BB);}
+    .num2 { background: linear-gradient(to bottom, #F3DDFF, #F9FAD7);}
+    .num3 { background: linear-gradient(to bottom, #FFBFBD, #C0EEFC);}
+    .num4 { background: linear-gradient(to bottom, #F5DEE7, #EEB8CC);}
+    .num5 { background: linear-gradient(to bottom, #FFB686, #F3DDFF);}
+    .num6 { background: linear-gradient(to bottom, #CA8454, #FBF6F3);}
+    .num7 { background: linear-gradient(to bottom, #3399FE, #F0F7FF);}
+    .num8 { background: linear-gradient(to bottom, #B8DDFF, #ffffff);}
+    .num9 { background: linear-gradient(to bottom, #F1FAFB, #8DD6D8);} 
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Arrow Column -->
+  <div class="arrow-col">
+    <div class="arrow arrow1">➜</div>
+    <div class="arrow arrow2">➜</div>
+    <div class="arrow arrow3">➜</div>
+    <div class="arrow arrow4">➜</div>
+    <div class="arrow arrow5">➜</div>
+  </div>
+
+  <!-- Left Column -->
+  <div class="left-col">
+    <div class="step">
+      <span class="numbox">{{ principal }}</span>
+      <span>=</span>
+      <div class="bracket">
+        <span class="thirdBracket">[</span> 1 +
+        <span class="fraction">
+          <span class="top varbox R">r</span>
+          <span class="bottom">100</span>
+        </span> <span class="thirdBracket">]</span> <sup>{{ time_years }}</sup>
+      </div>
+      <span>=</span>
+      <span class="numbox">{{ amount }}</span>
+    </div>
+
+    <div style="position: relative; left:130px; display: flex;flex-direction: column ; row-gap: 10px;">
+      <div class="step">
+        <div class="bracket">  <span class="thirdBracket">[</span> 1 +
+          <span class="fraction">
+            <span class="top varbox R">r</span>
+            <span class="bottom">100</span>
+          </span> <span class="thirdBracket">]</span><sup>{{ time_years }}</sup>
+        </div>
+        <span>=</span>
+        <span class="fraction">
+          <span class="top">{{ fraction_step1.split('/')[0] }}</span>
+          <span class="bottom">{{ fraction_step1.split('/')[1] }}</span>
+        </span>
+      </div>
+
+      <div class="step">
+        <div class="bracket">  <span class="thirdBracket">[</span> 1 +
+          <span class="fraction">
+            <span class="top varbox R">r</span>
+            <span class="bottom">100</span>
+          </span>  <span class="thirdBracket">]</span><sup>{{ time_years }}</sup>
+        </div>
+        <span>=</span>
+        <span class="fraction">
+          <span class="top">{{ fraction_step2.split('/')[0] }}</span>
+          <span class="bottom">{{ fraction_step2.split('/')[1] }}</span>
+        </span>
+      </div>
+
+      <div class="dashed-container">
+        <div class="bracket"> <span class="thirdBracket">[</span> 1 +
+          <span class="fraction">
+            <span class="top varbox R">r</span>
+            <span class="bottom">100</span>
+          </span>  <span class="thirdBracket">]</span>
+        </div>
+
+        <span>=</span>
+        <span class="fraction">
+          <span class="top"><span class="numbox num6">{{ cube_root_num }}</span></span>
+          <span class="bottom"><span class="numbox num5">{{ cube_root_den }}</span></span>
+        </span>
+
+        <div class="dashed-line"></div>
+
+        <div class="step">
+          <span class="blackbox-inline">{{ cube_root_num }}³ = {{ cube_root_num_cubed }}<br>{{ cube_root_den }}³ = {{ cube_root_den_cubed }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="varbox R">r</span>
+      <span>=</span>
+      <span class="fraction">
+        <span class=" top"><span class="numbox num1">{{ rate_calc.split('/')[0] }}</span></span>
+        <span class="bottom"><span class="numbox num5">{{ rate_calc.split('/')[1] }}</span></span>
+      </span>
+      <span>× 100</span>
+      <span class="varbox R" style="margin-left: 80px;">r</span>
+      <span>=</span>
+      <span class="numbox">{{ final_rate }}</span>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="right-col">
+    <div class="right-top-box">
+      <img src="{{ url_for('static', filename='interesticon.png') }}" alt="icon">
+      <div class="vertical-content">
+        <span>Interest Compounded Annually</span>
+
+        <!-- ARROW + BLACKBOX WRAPPER -->
+        <div class="blackbox-container">
+          <div class="long-arrow"></div>
+          <div class="blackbox" style="color: #000;">
+            <span class="numbox">{{ principal }}</span>
+            <span class="numbox num3">{{ time_years }}</span>
+            <span class="numbox">{{ amount }}</span>
+          </div>
+        </div>
+
+        <span style="text-align: center;">years</span>
+      </div>
+    </div>
+
+    <div class="blackbox" style="padding-left: 35px;">
+      Amount of the same sum in 2 years at<br />
+      the same rate of compound interest
+    </div>
+
+    <div style="position: relative;left: 126px; display: flex; flex-direction: column; row-gap: 20px;">
+      <div class="calc-line">
+        <span>=</span>
+        <span class="numbox">{{ principal }}</span>
+        <span class="bracket">  <span class="thirdBracket">[</span>1 +
+          <span class="fraction">
+            <span class="top">{{ rate_percent }}</span>
+            <span class="bottom">100</span>
+          </span>  <span class="thirdBracket">]</span> <sup>2</sup>
+        </span>
+      </div>
+
+      <div class="calc-line">
+        <span>=</span>
+        <span class="numbox">{{ principal }}</span>
+        <span>×</span>
+        <span class="fraction">
+          <span class="top">{{ cube_root_num }}</span>
+          <span class="bottom">{{ cube_root_den }}</span>
+        </span>
+        <span>×</span>
+        <span class="fraction">
+          <span class="top">{{ cube_root_num }}</span>
+          <span class="bottom">{{ cube_root_den }}</span>
+        </span>
+      </div>
+
+      <div class="calc-line">
+        <span>=</span>
+        <span class="highlight">{{ amount_2_years }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
