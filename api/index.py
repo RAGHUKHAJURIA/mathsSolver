@@ -1,32 +1,36 @@
+from flask import Flask, request, jsonify, render_template
 import os
 import sys
 
-# Add current directory to Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add the parent directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
-from flask import Flask, request, jsonify, render_template
-
-# Import your modules
 try:
     from classifiers.question_classifier import classify_question
     from solvers.trigonometry import solve_trigonometry
     from solvers.interest import solve_interest
-except ImportError as e:
-    print(f"Import error: {e}")
-    # Fallback imports
+except ImportError:
+    # Try relative imports
     import importlib.util
-    import os
     
-    def import_module_from_file(module_name, file_path):
-        spec = importlib.util.spec_from_file_location(module_name, file_path)
+    def load_module(module_path, module_name):
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
     
-    # Import modules directly
-    classify_question = import_module_from_file('classify_question', './classifiers/question_classifier.py').classify_question
-    solve_trigonometry = import_module_from_file('solve_trigonometry', './solvers/trigonometry.py').solve_trigonometry
-    solve_interest = import_module_from_file('solve_interest', './solvers/interest.py').solve_interest
+    classifiers_dir = os.path.join(parent_dir, 'classifiers')
+    solvers_dir = os.path.join(parent_dir, 'solvers')
+    
+    classifier_module = load_module(os.path.join(classifiers_dir, 'question_classifier.py'), 'question_classifier')
+    trig_module = load_module(os.path.join(solvers_dir, 'trigonometry.py'), 'trigonometry')
+    interest_module = load_module(os.path.join(solvers_dir, 'interest.py'), 'interest')
+    
+    classify_question = classifier_module.classify_question
+    solve_trigonometry = trig_module.solve_trigonometry
+    solve_interest = interest_module.solve_interest
 
 app = Flask(__name__)
 
@@ -43,11 +47,8 @@ def solve_question():
         if not question:
             return jsonify({'error': 'No question provided'}), 400
         
-        print(f"PROCESSING QUESTION: {question}")
-        
         # Classify the question
         question_type = classify_question(question)
-        print(f"CLASSIFIED AS: {question_type}")
         
         # Solve based on type
         if question_type == 'trigonometry':
@@ -59,8 +60,6 @@ def solve_question():
         else:
             return jsonify({'error': 'Unsupported question type'}), 400
         
-        print(f"SOLUTION DATA: {solution_data}")
-        
         # Render template with solution data
         rendered_html = render_template(template_name, **solution_data)
         
@@ -70,10 +69,14 @@ def solve_question():
         })
         
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        import traceback
-        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Vercel serverless function handler
+def handler(request):
+    with app.app_context():
+        response = app.full_dispatch_request()
+        return {
+            'statusCode': response.status_code,
+            'headers': dict(response.headers),
+            'body': response.get_data(as_text=True)
+        }
